@@ -12,6 +12,6 @@ tradingConfig = {
 }
 
 emailingConfig = {
-    'toEmail': '',
-    'fromEmail': 'tradingBot@robot.com'
+    'toEmails': [''],
+    'fromEmail': ''
 }
