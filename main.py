@@ -1,13 +1,8 @@
-import rsiBot
+import conductorBot
 
 def main():
-    r = rsiBot.rsiBot()
-    print(r.getRSI())
-    print(r.getLastRSI())
-    print(r.getRSIWindow())
-    print(r.getRSIOverbought())
-    print(r.getRSIOversold())
-    print(r.getDataTrend())
+    conductor = conductorBot.conductorBot()
+    conductor.orchestrate()
 
 if __name__ == "__main__":
     main()

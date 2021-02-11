@@ -4,90 +4,90 @@ import numpy
 class rsiBot:
 
     def __init__(self):
-        self._rsi = None
-        self._lastRsi = None
-        self._rsiWindow = 0
-        self._rsiOverbought = 0
-        self._rsiOversold = 0
-        self._dataTrend = []
+        self.__rsi = None
+        self.__lastRsi = None
+        self.__rsiWindow = 0
+        self.__rsiOverbought = 0
+        self.__rsiOversold = 0
+        self.__dataTrend = []
     
     def getRSI(self):
-        if self._rsi == None:
-            print("No RSI is available")
+        if self.__rsi == None:
+            print("RSI Bot: No RSI is available")
             return None
-        return self._rsi
+        return self.__rsi
     
     def getLastRSI(self):
-        if self._lastRsi == None:
-            print("No Last RSI is available")
+        if self.__lastRsi == None:
+            print("RSI Bot: No Last RSI is available")
             return None
     
     def getRSIWindow(self):
-        if self._rsiWindow <= 0:
-            print("No RSI Window available")
+        if self.__rsiWindow <= 0:
+            print("RSI Bot: No RSI Window available")
             return 0
-        return self._rsiWindow
+        return self.__rsiWindow
     
     def getRSIOverbought(self):
-        if self._rsiOverbought <= 0:
-            print("No RSI Overbought available")
+        if self.__rsiOverbought <= 0:
+            print("RSI Bot: No RSI Overbought available")
             return 0
-        return self._rsiOverbought
+        return self.__rsiOverbought
     
     def getRSIOversold(self):
-        if self._rsiOversold <= 0:
-            print("No RSI Oversold available")
+        if self.__rsiOversold <= 0:
+            print("RSI Bot: No RSI Oversold available")
             return 0
-        return self._rsiOversold
+        return self.__rsiOversold
     
     def getDataTrend(self):
-        if len(self._dataTrend) <= 0:
-            print("No Data Trend is available")
+        if len(self.__dataTrend) <= 0:
+            print("RSI Bot: No Data Trend is available")
             return []
-        return self._dataTrend
+        return self.__dataTrend
     
     def setRSIWindow(self, rsiWindow):
         if rsiWindow <= 0:
-            print("Cannot set RSI Window to anything less than 1")
+            print("RSI Bot: Cannot set RSI Window to anything less than 1")
             return
-        self._rsiWindow = rsiWindow
+        self.__rsiWindow = rsiWindow
     
     def setRSIOverbought(self, rsiOverbought):
         if rsiOverbought <= 0:
-            print("Cannot set RSI Overbought to a value less than 1")
-        if self._rsiOversold > 0 and rsiOverbought < self._rsiOversold:
-            print("Cannot set RSI Overbought to a value less than RSI Oversold")
-        self._rsiOverbought = rsiOverbought
+            print("RSI Bot: Cannot set RSI Overbought to a value less than 1")
+        if self.__rsiOversold > 0 and rsiOverbought < self.__rsiOversold:
+            print("RSI Bot: Cannot set RSI Overbought to a value less than RSI Oversold")
+        self.__rsiOverbought = rsiOverbought
     
     def setRSIOversold(self, rsiOversold):
         if rsiOversold <= 0:
-            print("Cannot set RSI Oversold to a value less than 1")
-        if self._rsiOverbought > 0 and rsiOversold > self._rsiOverbought:
-            print("Cannot set RSI Oversold to a value greater than RSI Overbought")
-        self._rsiOversold = rsiOversold
+            print("RSI Bot: Cannot set RSI Oversold to a value less than 1")
+        if self.__rsiOverbought > 0 and rsiOversold > self.__rsiOverbought:
+            print("RSI Bot: Cannot set RSI Oversold to a value greater than RSI Overbought")
+        self.__rsiOversold = rsiOversold
     
     def addToDataTrend(self, value):
         try:
             f_value = float(value)
-            self._dataTrend.append(f_value)
+            self.__dataTrend.append(f_value)
         except ValueError:
-            print("Unable to convert value to float, cannot add to Data Trend")
+            print("RSI Bot: Unable to convert value to float, cannot add to Data Trend")
             return
     
     def calculateRSI(self):
-        if self._rsiWindow <= 0:
-            print("Unable to calculate RSI, RSI Window is too low")
+        if self.__rsiWindow <= 0:
+            print("RSI Bot: Unable to calculate RSI, RSI Window is too low")
             return
-        if len(self._dataTrend) <= 0:
-            print("Unable to calculate RSI, Data Trend too small")
-        if len(self._dataTrend) < self._rsiWindow:
-            print("Unable to calculate RSI, Data Trend small then RSI Window")
-        np_dataTrend = numpy.array(self._dataTrend)
-        self._rsi = talib.RSI(np_dataTrend, self._rsiWindow)
+        if len(self.__dataTrend) <= 0:
+            print("RSI Bot: Unable to calculate RSI, Data Trend too small")
+        if len(self.__dataTrend) < self.__rsiWindow:
+            print("RSI Bot: Unable to calculate RSI, Data Trend small then RSI Window")
+        np_dataTrend = numpy.array(self.__dataTrend)
+        self.__rsi = talib.RSI(np_dataTrend, self.__rsiWindow)
     
     def trainRSIBot(self, trainingData):
         if len(trainingData) <= 0:
-            print("No Training Data provided")
+            print("RSI Bot: No Training Data provided")
             return
         for data in trainingData:
             self.addToDataTrend(data)

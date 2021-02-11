@@ -5,8 +5,11 @@ rh = {
 
 tradingConfig = {
     'tradingEnabled': False,
-    'tradingSymbol': '',
-    'rsiPeriod': 14,
+    'tradingSymbol': ''
+}
+
+rsiConfig = {
+    'rsiWindow': 14,
     'rsiOverbought': 70,
     'rsiOversold': 30
 }
