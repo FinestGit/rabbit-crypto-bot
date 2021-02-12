@@ -1,14 +1,20 @@
 import sys
 import signal
 import time
-import config as cfg
+
+# Bot imports
 import rsiBot
+import macdBot
 import sessionBot
+
+# Config imports
+import config as cfg
 
 class conductorBot:
     def __init__(self):
         print("Conductor Bot: I shall conduct")
         self.__rsiBot = rsiBot.rsiBot()
+        self.__macdBot = macdBot.macdBot()
         self.__sessionBot = sessionBot.sessionBot()
         self.loadConfig()
     
@@ -22,7 +28,8 @@ class conductorBot:
         self.__rsiBot.setRSIWindow(cfg.rsiConfig['rsiWindow'])
 
         # MACD Bot configuration occurs here
-        print("Condcutor Bot: Loading MACD Bot")
+        print("Conductor Bot: Loading MACD Bot")
+        self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
 
         # Session bot configuration occurs here
         print("Conductor Bot: Loading Session Bot")

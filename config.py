@@ -6,16 +6,20 @@ rh = {
 
 tradingConfig = {
     'tradingEnabled': False,
-    'tradingSymbol': ''
+    'tradingSymbol': '',
 }
 
 rsiConfig = {
     'rsiWindow': 14,
     'rsiOverbought': 70,
-    'rsiOversold': 30
+    'rsiOversold': 30,
+}
+
+macdConfig = {
+    'checkedHistogramWindow': 15,
 }
 
 emailingConfig = {
     'toEmails': [''],
-    'fromEmail': ''
+    'fromEmail': '',
 }

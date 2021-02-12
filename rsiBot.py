@@ -84,6 +84,7 @@ class rsiBot:
             print("RSI Bot: Unable to calculate RSI, Data Trend small then RSI Window")
         np_dataTrend = numpy.array(self.__dataTrend)
         self.__rsi = talib.RSI(np_dataTrend, self.__rsiWindow)
+        self.__lastRsi = self.__rsi[-1]
     
     def trainRSIBot(self, trainingData):
         if len(trainingData) <= 0:
@@ -91,3 +92,4 @@ class rsiBot:
             return
         for data in trainingData:
             self.addToDataTrend(data)
+        self.calculateRSI()
