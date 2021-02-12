@@ -1,6 +1,7 @@
 rh = {
     'username': '',
     'password': '',
+    'expiration': 86400,
 }
 
 tradingConfig = {
