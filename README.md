@@ -23,6 +23,8 @@ TRADE_SYMBOL="SOMECOINSYMBOL"
 RSI_PERIOD=14
 RSI_OVERBOUGHT=70
 RSI_OVERSOLD=30
+PROFIT_PERCENT=1
+MAXIMUM_CASH=100
 ```
 
 Now simply run py test.py while in the folder that you cloned the repo into.
