@@ -61,10 +61,16 @@ class macdBot:
         return self.__dataTrend
     
     def setCheckedHistogramWindow(self, checkedHistogramWindow):
-        if checkedHistogramWindow <= 0:
+        try:
+            i_checkedHistogramWindow = int(checkedHistogramWindow)
+        except ValueError:
+            print("MACD Bot: Could not assign Checked Histogram Window to a value that is not an int")
+            return
+        if i_checkedHistogramWindow <= 0:
             print("MACD Bot: Cannot set Checked Histogram Window to any value less than 1")
             return
-        self.__checkedHistogramWindow = checkedHistogramWindow
+        self.__checkedHistogramWindow = i_checkedHistogramWindow
+        
     
     def addToDataTrend(self, value):
         try:

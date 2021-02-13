@@ -22,21 +22,25 @@ class sessionBot:
     
     def setUsername(self, username):
         if username == '':
-            print("Session Bot: Cannot set username to an empty string")
+            print("Session Bot: Cannot set Username to an empty string")
             return
         self.__username = username
         
     def setPassword(self, password):
         if password == '':
-            print("Session Bot: Cannot set password to an empty string")
+            print("Session Bot: Cannot set Password to an empty string")
             return
         self.__password = password
     
     def setSessionLength(self, sessionLength):
-        if sessionLength <= 0:
-            print("Session Bot: Cannot set session length to a number less than 1")
+        try:
+            i_sessionLength = int(sessionLength)
+        except ValueError:
+            print("Session Bot: Cannot set Session Length to a value that is not an int")
+        if i_sessionLength <= 0:
+            print("Session Bot: Cannot set Session Length to a number less than 1")
             return
-        self.__sessionLength = sessionLength
+        self.__sessionLength = i_sessionLength
     
     def isSessionExpired(self):
         if self.__sessionStartTime == '' or self.__sessionLength <= 0:

@@ -1,29 +1,24 @@
-rh = {
-    'username': '',
-    'password': '',
-    'expiration': 86400,
-}
+from dotenv import load_dotenv
+import os
 
-tradingConfig = {
-    'tradingEnabled': False,
-    'tradingSymbol': '',
+load_dotenv()
+
+rh = {
+    'username': os.getenv("USERNAME"),
+    'password': os.getenv("PASSWORD"),
+    'expiration': os.getenv("EXPIRATION"),
 }
 
 rsiConfig = {
-    'rsiWindow': 14,
-    'rsiOverbought': 70,
-    'rsiOversold': 30,
+    'rsiWindow': os.getenv("RSI_WINDOW"),
+    'rsiOverbought': os.getenv("RSI_OVERBOUGHT"),
+    'rsiOversold': os.getenv("RSI_OVERSOLD"),
 }
 
 macdConfig = {
-    'checkedHistogramWindow': 15,
+    'checkedHistogramWindow': os.getenv("CHECKED_HISTOGRAM_WINDOW"),
 }
 
 cashConfig = {
     'maximumUsableCash': 100,
-}
-
-emailingConfig = {
-    'toEmails': [''],
-    'fromEmail': '',
 }
