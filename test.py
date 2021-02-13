@@ -10,21 +10,21 @@ import datetime
 
 class coin:
     purchasedPrice = 0.0
-    numHeld = 0.0
     numBought = 0.0
     name = ""
     lastBuyOrderID = ""
     lastSellOrderID = ""
     boughtTime = ""
+    sellPrice = 0.00
 
     def __init__(self, name=""):
         self.name = name
         self.purchasedPrice = 0.0
-        self.numHeld = 0.0
         self.numBought = 0.0
         self.lastBuyOrderID = ""
         self.lastSellOrderID = ""
         self.boughtTime = ""
+        self.sellPrice = 0.0
 
 class bot:
     tradesEnabled = False
@@ -35,31 +35,49 @@ class bot:
     minCoinIncrement = 0.00
     minPriceIncrement = 0.00
     minOrderSize = 0.00
+    percentProfit = 0.00
+    profit = 0.00
+    maximumCash = 0.00
+    marketType = ''
+    buyPrices = []
+    sellPrices = []
     coinTrend = []
 
     def __init__(self):
         self.loadConfig()
 
-        Result = r.login(self.rh_user, self.rh_pw, 86400, by_sms=True)
+        self.login()
+
+        self.train()
     
     def loadConfig(self):
         print("\nLoading Config...")
-        self.tradesEnabled = cfg.TRADING_ENABLED
         self.rsiWindow = cfg.RSI_PERIOD
         self.rsiOverbought = cfg.RSI_OVERBOUGHT
         self.rsiOversold = cfg.RSI_OVERSOLD
+        self.percentProfit = cfg.PROFIT_PERCENT / 100
+        self.maximumCash = cfg.MAXIMUM_CASH
         self.rh_user = cfg.USERNAME
         self.rh_pw = cfg.PASSWORD
         self.coin = coin(cfg.TRADE_SYMBOL)
         print("\n")
     
+    def login(self):
+        try:
+            r.logout()
+        except:
+            print("Not logged in yet")
+        print("\nLogging in...")
+        Result = r.login(self.rh_user, self.rh_pw, expiresIn=60*60*12, by_sms=True)
+    
     def getCurrentPrice(self):
         try:
             result = r.get_crypto_quote(self.coin.name)
+            price = self.roundDown(float(result['mark_price']), self.minPriceIncrement)
         except:
             print("Problem retrieving crypto quote")
-            return
-        return float(result['mark_price'])
+            return 0
+        return float(price)
     
     def getIncrements(self):
         try:
@@ -71,7 +89,6 @@ class bot:
             print("Problem getting crypto information")
     
     def getCash(self):
-        reserve = 0.00
         try:
             me = r.load_account_profile()
             cash = float(me['portfolio_cash'])
@@ -79,10 +96,10 @@ class bot:
             print("Issue retrieving cash on hand amount")
             return -1.0
         
-        if cash - reserve < 0.0:
-            return 0.0
+        if cash < self.maximumCash:
+            return cash
         else:
-            return cash - reserve
+            return self.maximumCash
 
     def getBuyingPower(self, cash, price):
         buyable_qty = float(cash / price)
@@ -93,11 +110,15 @@ class bot:
             return 0
     
     def getProfitability(self):
-        price = self.getCurrentPrice()
-        total_sale = self.coin.numBought * price
-        if total_sale > 0.01:
-            profit_margin = total_sale - (self.coin.purchasedPrice * self.coin.numBought)
-            if profit_margin > 0.01:
+        # to disable checking profitability uncomment this
+        # return True
+        price = float(self.getCurrentPrice())
+        total_sale = float(self.coin.numBought * price)
+        buy_total = self.coin.purchasedPrice * self.coin.numBought
+        minimum_profit = buy_total * self.percentProfit
+        if total_sale > minimum_profit:
+            profit_margin = total_sale - buy_total
+            if profit_margin > minimum_profit:
                 print("Profitable")
                 return True
             else:
@@ -106,12 +127,21 @@ class bot:
         else:
             print("Not making a profit, cancelling sale")
             return False
+    
+    def getProfits(self):
+        for buyPrice in self.buyPrices:
+            for i in range(0, len(self.buyPrices) - 1):
+                self.profit += self.sellPrices[i] - buyPrice
+        print(self.buyPrices)
+        print(self.sellPrices)
 
     def buyComplete(self):
         try:
             result = r.get_crypto_order_info(self.coin.lastBuyOrderID)
             state = result['state']
             if state == 'filled':
+                cost = self.roundDown((float(result['price']) * float(result['quantity'])), 0.01)
+                self.buyPrices.append(cost)
                 return True
             else:
                 return False
@@ -124,6 +154,8 @@ class bot:
             result = r.get_crypto_order_info(self.coin.lastSellOrderID)
             state = result['state']
             if state == 'filled':
+                cost = self.roundDown((float(result['price']) * float(result['quantity'])), 0.01)
+                self.sellPrices.append(cost)
                 return True
             else:
                 return False
@@ -140,23 +172,23 @@ class bot:
             return -1
     
     def buy(self):
-        availableCash = self.getCash()
+        availableCash = float(self.getCash())
         if availableCash == -1:
             print("Got an exception checking for available cash, cancelling buy.")
             return
         else:
             if self.tradesEnabled == True:
                 try:
-                    price = self.getCurrentPrice()
-                    buyable_qty = self.getBuyingPower(availableCash, price)
+                    price = self.roundDown(self.getCurrentPrice(), self.minPriceIncrement)
+                    buyable_qty = self.roundDown(self.getBuyingPower(availableCash, price), self.minCoinIncrement)
                     if buyable_qty > 0:
                         try:
                             print("Buying")
                             result = r.order_buy_crypto_limit(self.coin.name, buyable_qty, price)
                             self.coin.purchasedPrice = price
                             self.coin.numBought = buyable_qty
+                            print(result)
                             self.coin.lastBuyOrderID = result['id']
-                            self.coin.numHeld = self.coin.numBought + self.coin.numHeld
                             self.coin.boughtTime = str(datetime.datetime.now())
                         except:
                             print("Error buying, cancelling buy.")
@@ -168,7 +200,6 @@ class bot:
                     print("Error getting quote for buy, cancelling buy.")
                     return
             return
-
     
     def sell(self):
         if self.coin.numBought <= 0:
@@ -176,18 +207,18 @@ class bot:
             return
         if self.tradesEnabled == True:
             if self.getProfitability():
-                price = self.getCurrentPrice()
-                sellable_qty = self.coin.numBought
+                price = self.roundDown(self.getCurrentPrice(), self.minPriceIncrement)
+                sellable_qty = self.roundDown(self.coin.numBought, self.minCoinIncrement)
                 if sellable_qty > 0:
                     try:
                         print("Selling")
-                        print("Sold {} {} @ {}".format(self.coin.numBought, self.coin.name, price))
                         result = r.order_sell_crypto_limit(self.coin.name, sellable_qty, price)
                         self.coin.purchasedPrice = 0.0
+                        self.coin.sellPrice = price
                         self.coin.numBought = 0.0
                         self.coin.lastBuyOrderID = ''
-                        self.coin.numHeld = self.coin.numHeld - self.coin.numBought
                         self.coin.boughtTime = ''
+                        print(result)
                         self.coin.lastSellOrderID = result['id']
                     except:
                         print("Error selling, cancelling sale.")
@@ -196,17 +227,52 @@ class bot:
                 print("Not Profitable Holding")
         return
     
+    def macdCheck(self, macd, macdSignal, macdHist):
+        checkedHist = macdHist[(-(self.rsiWindow + 1)):]
+        if macd[-1] > macdSignal[-1]:
+            count = 0
+            for hist in checkedHist:
+                if hist < 0:
+                    count += 1
+            if count < self.rsiWindow:
+                return
+            self.marketType = "Bullish"
+            self.rsiOverbought = 80
+            self.rsiOversold = 50
+        if macd[-1] < macdSignal[-1]:
+            count = 0
+            for hist in checkedHist:
+                if hist > 0:
+                    count += 1
+            if count < self.rsiWindow:
+                return
+            self.marketType = "Bearish"
+            self.rsiOverbought = 55
+            self.rsiOversold = 30
+    
     def train(self):
+        self.tradesEnabled = False
         try:
             training_data = r.get_crypto_historicals(symbol=self.coin.name, interval='15second', span='hour', bounds='24_7', info='close_price')
             for data in training_data:
                 self.coinTrend.append(float(data))
+                np_closes = numpy.array(self.coinTrend)
+                rsi = talib.RSI(np_closes, self.rsiWindow)
+                last_rsi = rsi[-1]
+                macd, macdsignal, macdhist = talib.MACD(np_closes)
+                self.macdCheck(macd, macdsignal, macdhist)
+                print("Current rsi {}".format(last_rsi))
+                self.tradesEnabled = cfg.TRADING_ENABLED
         except:
             print("Problem fetching training data")
             return
     
     def killBot(self, sig, frame):
         print('Exiting...')
+        print(self.buyPrices)
+        print(self.sellPrices)
+        self.getProfits()
+        print(self.profit)
         r.logout()
         sys.exit(0)
     
@@ -214,26 +280,32 @@ class bot:
         return math.floor(x/a) * a
     
     def runBot(self):
-        self.train()
         self.getIncrements()
 
+        start_time = datetime.datetime.now()
+
         while True:
-            self.coinTrend.append(self.getCurrentPrice())
+            timeDiffStartTime = start_time - datetime.datetime.now()
+
+            if (timeDiffStartTime.total_seconds() > (60*60*12)):
+                self.login()
+
+            current_price = self.getCurrentPrice()
+            if current_price > 0:
+                self.coinTrend.append(self.getCurrentPrice())
+            else:
+                self.coinTrend.append(self.coinTrend[-1])
             
             now = datetime.datetime.now()
 
             if len(self.coinTrend) > self.rsiWindow:
                 np_closes = numpy.array(self.coinTrend)
                 rsi = talib.RSI(np_closes, self.rsiWindow)
-                macd, macdsignal, macdhist = talib.MACD(np_closes)
-                last_macd = macd[-1]
-                last_macdsignal = macdsignal[-1]
-                last_macdhist = macdhist[-1]
                 last_rsi = rsi[-1]
+                macd, macdsignal, macdhist = talib.MACD(np_closes)
+                self.macdCheck(macd, macdsignal, macdhist)
+                print(self.marketType)
                 print("Current rsi {}".format(last_rsi))
-                print("Current macd {}".format(last_macd))
-                print("Current macd signal {}".format(last_macdsignal))
-                print("Current macd histogram {}".format(last_macdhist))
 
                 if self.coin.lastBuyOrderID != '' and self.boughtIn == False:
                     if(self.buyComplete()):
@@ -251,21 +323,23 @@ class bot:
                                 self.coin.lastBuyOrderID = ''
                                 self.coin.numBought = 0.00
                                 self.coin.purchasedPrice = 0.00
-                                self.coin.numHeld = self.coin.numHeld - self.coin.numBought
                                 self.boughtIn = False
                         print("Buy not yet completed")
                 if self.coin.lastSellOrderID != '' and self.boughtIn == True:
                     if(self.sellComplete()):
                         print("Sale Completed")
+                        print("Sold {} {} @ {}".format(self.coin.numBought, self.coin.name, self.coin.sellPrice))
+                        self.coin.lastSellOrderID = ''
+                        self.coin.sellPrice = 0.00
                         self.boughtIn = False
 
-                if last_rsi > self.rsiOverbought:
+                if (last_rsi > self.rsiOverbought) and (self.coin.lastSellOrderID == ''):
                     if self.boughtIn:
                         self.sell()
                     else:
                         print("Nothing to sell")
                 
-                if last_rsi < self.rsiOversold:
+                if (last_rsi < self.rsiOversold) and (self.coin.lastBuyOrderID == ''):
                     if self.boughtIn:
                         print("Already in Position")
                     else:

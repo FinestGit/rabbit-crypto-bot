@@ -1,17 +1,20 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 rh = {
-    'username': '',
-    'password': '',
+    'username': os.getenv("USERNAME"),
+    'password': os.getenv("PASSWORD"),
+    'expiration': os.getenv("EXPIRATION"),
 }
 
-tradingConfig = {
-    'tradingEnabled': False,
-    'tradingSymbol': '',
-    'rsiPeriod': 14,
-    'rsiOverbought': 70,
-    'rsiOversold': 30
+rsiConfig = {
+    'rsiWindow': os.getenv("RSI_WINDOW"),
+    'rsiOverbought': os.getenv("RSI_OVERBOUGHT"),
+    'rsiOversold': os.getenv("RSI_OVERSOLD"),
 }
 
-emailingConfig = {
-    'toEmails': [''],
-    'fromEmail': ''
+macdConfig = {
+    'checkedHistogramWindow': os.getenv("CHECKED_HISTOGRAM_WINDOW"),
 }
