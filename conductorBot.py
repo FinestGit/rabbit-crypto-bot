@@ -31,12 +31,20 @@ class conductorBot:
         print("Conductor Bot: Loading MACD Bot")
         self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
 
-        # Session bot configuration occurs here
+        # Session Bot configuration occurs here
         print("Conductor Bot: Loading Session Bot")
         self.__sessionBot.setUsername(cfg.rh['username'])
         self.__sessionBot.setPassword(cfg.rh['password'])
         self.__sessionBot.setSessionLength(cfg.rh['expiration'])
         self.__sessionBot.sessionStart()
+
+        # Cash Bot configuration occurs here
+
+        # Quote Bot configuration occurs here
+
+        # Buy Bot configuration occurs here
+
+        # Sell Bot configuration occurs here
     
     def killConductor(self, sig, frame):
         print("\nConductor Bot: Shutting down gracefully")
