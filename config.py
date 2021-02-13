@@ -19,6 +19,10 @@ macdConfig = {
     'checkedHistogramWindow': 15,
 }
 
+cashConfig = {
+    'maximumUsableCash': 100,
+}
+
 emailingConfig = {
     'toEmails': [''],
     'fromEmail': '',
