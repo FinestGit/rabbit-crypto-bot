@@ -18,10 +18,14 @@ class cashBot:
         return self.__maximumUsableCash
     
     def setMaximumUsableCash(self, maximumCash):
-        if maximumCash <= 0:
+        try:
+            i_maximumCash = int(maximumCash)
+        except ValueError:
+            print("Cash Bot: Cannot set Maximum Usable Cash to a value that is not an int")
+        if i_maximumCash <= 0:
             print("Cash Bot: Cannot set Maximum Usable Cash to a value less than 1")
             return
-        self.__maximumUsableCash = maximumCash
+        self.__maximumUsableCash = i_maximumCash
     
     def getRobinhoodCash(self):
         try:

@@ -20,5 +20,5 @@ macdConfig = {
 }
 
 cashConfig = {
-    'maximumUsableCash': 100,
+    'maximumUsableCash': os.getenv("MAXIMUM_CASH"),
 }
