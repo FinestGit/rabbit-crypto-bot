@@ -47,24 +47,39 @@ class rsiBot:
         return self.__dataTrend
     
     def setRSIWindow(self, rsiWindow):
-        if rsiWindow <= 0:
+        try:
+            i_rsiWindow = int(rsiWindow)
+        except ValueError:
+            print("RSI Bot: Could not assign RSI Window to a value that is not an int")
+            return
+        if i_rsiWindow <= 0:
             print("RSI Bot: Cannot set RSI Window to anything less than 1")
             return
-        self.__rsiWindow = rsiWindow
+        self.__rsiWindow = i_rsiWindow
     
     def setRSIOverbought(self, rsiOverbought):
-        if rsiOverbought <= 0:
+        try:
+            i_rsiOverbought = int(rsiOverbought)
+        except ValueError:
+            print("RSI Bot: Could not assign RSI Overbought to a value that is not an int")
+            return
+        if i_rsiOverbought <= 0:
             print("RSI Bot: Cannot set RSI Overbought to a value less than 1")
-        if self.__rsiOversold > 0 and rsiOverbought < self.__rsiOversold:
+        if self.__rsiOversold > 0 and i_rsiOverbought < self.__rsiOversold:
             print("RSI Bot: Cannot set RSI Overbought to a value less than RSI Oversold")
-        self.__rsiOverbought = rsiOverbought
+        self.__rsiOverbought = i_rsiOverbought
     
     def setRSIOversold(self, rsiOversold):
-        if rsiOversold <= 0:
+        try:
+            i_rsiOversold = int(rsiOversold)
+        except ValueError:
+            print("RSI Bot: Could not assign RSI Oversold to a value that is not an int")
+            return
+        if i_rsiOversold <= 0:
             print("RSI Bot: Cannot set RSI Oversold to a value less than 1")
-        if self.__rsiOverbought > 0 and rsiOversold > self.__rsiOverbought:
+        if self.__rsiOverbought > 0 and i_rsiOversold > self.__rsiOverbought:
             print("RSI Bot: Cannot set RSI Oversold to a value greater than RSI Overbought")
-        self.__rsiOversold = rsiOversold
+        self.__rsiOversold = i_rsiOversold
     
     def addToDataTrend(self, value):
         try:
