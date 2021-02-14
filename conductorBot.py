@@ -9,6 +9,7 @@ import macdBot
 import sessionBot
 import cashBot
 import pickleBot
+import quoteBot
 
 # Config imports
 import config as cfg
@@ -21,6 +22,7 @@ class conductorBot:
         self.__macdBot = macdBot.macdBot()
         self.__sessionBot = sessionBot.sessionBot()
         self.__cashBot = cashBot.cashBot()
+        self.__quoteBot = quoteBot.quoteBot()
         self.loadConfig()
     
     def loadConfig(self):
@@ -44,6 +46,8 @@ class conductorBot:
             self.__cashBot = data['cashBot']
         
         else:
+            # Panda Bot configuration occurs here
+
             # RSI Bot configuration occurs here
             print("Conductor Bot: Loading RSI Bot")
             self.__rsiBot.setRSIOverbought(cfg.rsiConfig['rsiOverbought'])
@@ -60,8 +64,11 @@ class conductorBot:
             cash = -1
             while cash < 0:
                 cash = self.__cashBot.getRobinhoodCash()
-
+            
             # Quote Bot configuration occurs here
+            print("Conductor Bot: Loading Quote Bot")
+            for coinSymbol in cfg.quoteConfig['coins']:
+                self.__quoteBot.addQuote(coinSymbol)
 
             # Buy Bot configuration occurs here
 
@@ -73,7 +80,8 @@ class conductorBot:
         currentState = {
             "rsiBot": self.__rsiBot,
             "macdBot": self.__macdBot,
-            "cashBot": self.__cashBot
+            "cashBot": self.__cashBot,
+            "quoteBot": self.__quoteBot,
         }
         return currentState
     
@@ -88,4 +96,9 @@ class conductorBot:
         while True:
             print("Orchestrating")
             signal.signal(signal.SIGINT, self.killConductor)
-            time.sleep(1)
+            self.__quoteBot.updateQuotes()
+            self.__quoteBot.getCurrentQuoteState()
+
+            state = self.combineState()
+            self.__pickleBot.pickle(state)
+            time.sleep(5)

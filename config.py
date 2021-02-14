@@ -26,3 +26,7 @@ macdConfig = {
 cashConfig = {
     'maximumUsableCash': os.getenv("MAXIMUM_CASH"),
 }
+
+quoteConfig = {
+    'coins': os.getenv("COIN_LIST").split(',')
+}

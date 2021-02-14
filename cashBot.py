@@ -30,13 +30,10 @@ class cashBot:
     def getRobinhoodCash(self):
         try:
             account = r.load_account_profile()
-            cash = account['buying_power']
-            print(cash)
-            return 1.0
-            # Add this once verified that this gives the correct amount
-            # if cash >= 0:
-            #     self.__cashOnHand = cash
-            #     return self.__cashOnHand
+            cash = float(account['buying_power'])
+            if cash >= 0:
+                self.__cashOnHand = cash
+                return self.__cashOnHand
         except:
             print("Cash Bot: Issue retrieving Cash On Hand from Robinhood")
             return -1.0
