@@ -51,7 +51,8 @@ class sessionBot:
         timeDiffSessionStart = now - dt_sessionStart
         if (timeDiffSessionStart.total_seconds() > self.__sessionLength):
             print("Session Bot: Session has expired")
-            self.sessionStart()
+            return True
+        return False
         
     def sessionStart(self):
         if (self.__username == '') or (self.__password == '') or (self.__sessionLength <= 0):

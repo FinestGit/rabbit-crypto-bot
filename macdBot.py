@@ -15,49 +15,49 @@ class macdBot:
     def getMACD(self):
         if self.__macd == None:
             print("MACD Bot: No MACD is available")
-            return
+            return None
         return self.__macd
     
     def getMACDSignal(self):
         if self.__macdSignal == None:
             print("MACD Bot: No MACD Signal is available")
-            return
+            return None
         return self.__macdSignal
         
     def getMACDHistogram(self):
         if self.__macdHistogram == None:
             print("MACD Bot: No MACD Histogram is available")
-            return
+            return None
         return self.__macdHistogram
     
     def getLastMACD(self):
         if self.__lastMacd == None:
             print("MACD Bot: No Last MACD is available")
-            return
+            return None
         return self.__lastMacd
     
     def getLastMACDSignal(self):
         if self.__lastMacdSignal == None:
             print("MACD Bot: No Last MACD Signal is available")
-            return
+            return None
         return self.__lastMacdSigna
     
     def getCheckedHistogram(self):
         if self.__checkedHistogram == None:
             print("MACD Bot: No Checked Histogram is available")
-            return
+            return None
         return self.__checkedHistogram
     
     def getCheckedHistogramWindow(self):
         if self.__checkedHistogramWindow <= 0:
             print("MACD Bot: No Checked Histogram Window is available")
-            return
+            return 0
         return self.__checkedHistogramWindow
     
     def getDataTrend(self):
         if len(self.__dataTrend) <= 0:
             print("MACD Bot: No Data Trend is available")
-            return
+            return []
         return self.__dataTrend
     
     def setCheckedHistogramWindow(self, checkedHistogramWindow):

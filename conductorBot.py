@@ -6,6 +6,7 @@ import time
 import rsiBot
 import macdBot
 import sessionBot
+import cashBot
 
 # Config imports
 import config as cfg
@@ -16,10 +17,13 @@ class conductorBot:
         self.__rsiBot = rsiBot.rsiBot()
         self.__macdBot = macdBot.macdBot()
         self.__sessionBot = sessionBot.sessionBot()
+        self.__cashBot = cashBot.cashBot()
         self.loadConfig()
     
     def loadConfig(self):
         print("\nConductor Bot: Loading config...")
+
+        # Pickle Bot configuration occurs here
 
         # RSI Bot configuration occurs here
         print("Conductor Bot: Loading RSI Bot")
@@ -39,12 +43,19 @@ class conductorBot:
         self.__sessionBot.sessionStart()
 
         # Cash Bot configuration occurs here
+        print("Conductor Bot: Loading Cash Bot")
+        self.__cashBot.setMaximumUsableCash(cfg.cashConfig['maximumUsableCash'])
+        cash = -1
+        while cash < 0:
+            cash = self.__cashBot.getRobinhoodCash()
 
         # Quote Bot configuration occurs here
 
         # Buy Bot configuration occurs here
 
         # Sell Bot configuration occurs here
+
+        # Profit Bot configuration occurs here
     
     def killConductor(self, sig, frame):
         print("\nConductor Bot: Shutting down gracefully")

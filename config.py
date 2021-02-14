@@ -18,3 +18,7 @@ rsiConfig = {
 macdConfig = {
     'checkedHistogramWindow': os.getenv("CHECKED_HISTOGRAM_WINDOW"),
 }
+
+cashConfig = {
+    'maximumUsableCash': os.getenv("MAXIMUM_CASH"),
+}
