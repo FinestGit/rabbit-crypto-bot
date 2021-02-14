@@ -3,7 +3,11 @@ import os
 
 load_dotenv()
 
-rh = {
+pickleConfig = {
+    "pickleFile": os.getenv("PICKLE_FILE"),
+}
+
+rhConfig = {
     'username': os.getenv("USERNAME"),
     'password': os.getenv("PASSWORD"),
     'expiration': os.getenv("EXPIRATION"),

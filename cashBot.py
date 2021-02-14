@@ -31,6 +31,7 @@ class cashBot:
         try:
             account = r.load_account_profile()
             cash = account['buying_power']
+            print(cash)
             return 1.0
             # Add this once verified that this gives the correct amount
             # if cash >= 0:

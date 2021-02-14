@@ -1,12 +1,14 @@
 import sys
 import signal
 import time
+import os.path as path
 
 # Bot imports
 import rsiBot
 import macdBot
 import sessionBot
 import cashBot
+import pickleBot
 
 # Config imports
 import config as cfg
@@ -14,6 +16,7 @@ import config as cfg
 class conductorBot:
     def __init__(self):
         print("Conductor Bot: I shall conduct")
+        self.__pickleBot = pickleBot.pickleBot()
         self.__rsiBot = rsiBot.rsiBot()
         self.__macdBot = macdBot.macdBot()
         self.__sessionBot = sessionBot.sessionBot()
@@ -23,43 +26,62 @@ class conductorBot:
     def loadConfig(self):
         print("\nConductor Bot: Loading config...")
 
-        # Pickle Bot configuration occurs here
-
-        # RSI Bot configuration occurs here
-        print("Conductor Bot: Loading RSI Bot")
-        self.__rsiBot.setRSIOverbought(cfg.rsiConfig['rsiOverbought'])
-        self.__rsiBot.setRSIOversold(cfg.rsiConfig['rsiOversold'])
-        self.__rsiBot.setRSIWindow(cfg.rsiConfig['rsiWindow'])
-
-        # MACD Bot configuration occurs here
-        print("Conductor Bot: Loading MACD Bot")
-        self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
-
         # Session Bot configuration occurs here
         print("Conductor Bot: Loading Session Bot")
-        self.__sessionBot.setUsername(cfg.rh['username'])
-        self.__sessionBot.setPassword(cfg.rh['password'])
-        self.__sessionBot.setSessionLength(cfg.rh['expiration'])
+        self.__sessionBot.setUsername(cfg.rhConfig['username'])
+        self.__sessionBot.setPassword(cfg.rhConfig['password'])
+        self.__sessionBot.setSessionLength(cfg.rhConfig['expiration'])
         self.__sessionBot.sessionStart()
 
-        # Cash Bot configuration occurs here
-        print("Conductor Bot: Loading Cash Bot")
-        self.__cashBot.setMaximumUsableCash(cfg.cashConfig['maximumUsableCash'])
-        cash = -1
-        while cash < 0:
-            cash = self.__cashBot.getRobinhoodCash()
+        # Pickle Bot configuration occurs here
+        print("Conductor Bot: Loading Pickle Bot")
+        self.__pickleBot.setPickleFile(cfg.pickleConfig['pickleFile'])
+        if path.exists(self.__pickleBot.getPickleFile()):
+            print("Conductor Bot: Previous data exists, loading...")
+            data = self.__pickleBot.depickle()
+            self.__rsiBot = data['rsiBot']
+            self.__macdBot = data['macdBot']
+            self.__cashBot = data['cashBot']
+        
+        else:
+            # RSI Bot configuration occurs here
+            print("Conductor Bot: Loading RSI Bot")
+            self.__rsiBot.setRSIOverbought(cfg.rsiConfig['rsiOverbought'])
+            self.__rsiBot.setRSIOversold(cfg.rsiConfig['rsiOversold'])
+            self.__rsiBot.setRSIWindow(cfg.rsiConfig['rsiWindow'])
 
-        # Quote Bot configuration occurs here
+            # MACD Bot configuration occurs here
+            print("Conductor Bot: Loading MACD Bot")
+            self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
 
-        # Buy Bot configuration occurs here
+            # Cash Bot configuration occurs here
+            print("Conductor Bot: Loading Cash Bot")
+            self.__cashBot.setMaximumUsableCash(cfg.cashConfig['maximumUsableCash'])
+            cash = -1
+            while cash < 0:
+                cash = self.__cashBot.getRobinhoodCash()
 
-        # Sell Bot configuration occurs here
+            # Quote Bot configuration occurs here
 
-        # Profit Bot configuration occurs here
+            # Buy Bot configuration occurs here
+
+            # Sell Bot configuration occurs here
+
+            # Profit Bot configuration occurs here
+    
+    def combineState(self):
+        currentState = {
+            "rsiBot": self.__rsiBot,
+            "macdBot": self.__macdBot,
+            "cashBot": self.__cashBot
+        }
+        return currentState
     
     def killConductor(self, sig, frame):
         print("\nConductor Bot: Shutting down gracefully")
         self.__sessionBot.sessionEnd()
+        state = self.combineState()
+        self.__pickleBot.pickle(state)
         sys.exit(0)
     
     def orchestrate(self):
