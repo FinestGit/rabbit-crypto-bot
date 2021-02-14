@@ -7,7 +7,7 @@ class pickleBot:
     def getPickleFile(self):
         if self.__picklingFile == '':
             print("Pickle Bot: Pickling File is currently not available")
-            return
+            return ''
         return self.__picklingFile
     
     def setPickleFile(self, fileName):
