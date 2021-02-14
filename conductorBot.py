@@ -23,6 +23,8 @@ class conductorBot:
     def loadConfig(self):
         print("\nConductor Bot: Loading config...")
 
+        # Pickle Bot configuration occurs here
+
         # RSI Bot configuration occurs here
         print("Conductor Bot: Loading RSI Bot")
         self.__rsiBot.setRSIOverbought(cfg.rsiConfig['rsiOverbought'])
@@ -43,6 +45,9 @@ class conductorBot:
         # Cash Bot configuration occurs here
         print("Conductor Bot: Loading Cash Bot")
         self.__cashBot.setMaximumUsableCash(cfg.cashConfig['maximumUsableCash'])
+        cash = -1
+        while cash < 0:
+            cash = self.__cashBot.getRobinhoodCash()
 
         # Quote Bot configuration occurs here
 
