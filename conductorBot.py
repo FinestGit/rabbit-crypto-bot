@@ -98,4 +98,7 @@ class conductorBot:
             signal.signal(signal.SIGINT, self.killConductor)
             self.__quoteBot.updateQuotes()
             self.__quoteBot.getCurrentQuoteState()
+
+            state = self.combineState()
+            self.__pickleBot.pickle(state)
             time.sleep(5)
