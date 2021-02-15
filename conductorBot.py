@@ -101,7 +101,7 @@ class conductorBot:
         print("\nConductor Bot: Shutting down gracefully")
         self.__sessionBot.sessionEnd()
         state = self.combineState()
-        self.__pickleBot.pickle(state)
+        # self.__pickleBot.pickle(state)
         sys.exit(0)
     
     def orchestrate(self):
@@ -109,8 +109,13 @@ class conductorBot:
             print("Orchestrating")
             signal.signal(signal.SIGINT, self.killConductor)
             self.__quoteBot.updateQuotes()
-            self.__quoteBot.getQuoteState()
-
+            quotes = self.__quoteBot.getQuoteState()
+            for quote in quotes:
+                markPrice = self.__quoteBot.getMarkPrice(quote)
+                self.__rsiBot.addToDataTrendForSymbol(quote, markPrice)
+                self.__macdBot.addToDataTrendForSymbol(quote, markPrice)
+                self.__rsiBot.calculateRSIForSymbol(quote)
+                self.__macdBot.calculatedMACDForSymbol(quote)
             state = self.combineState()
-            self.__pickleBot.pickle(state)
+            # self.__pickleBot.pickle(state)
             time.sleep(5)

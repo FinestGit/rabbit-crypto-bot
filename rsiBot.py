@@ -38,7 +38,7 @@ class rsiBot:
         return rsi
     
     def getLastRSIForSymbol(self, symbol):
-        rsiState = self.getRSIForSymbol(symbol)
+        rsiState = self.getRSIStateForSymbol(symbol)
         if rsiState == None:
             print("RSI Bot: Last RSI is not available for {}".format(symbol))
             return -1
@@ -55,7 +55,7 @@ class rsiBot:
         return self.__rsiWindow
     
     def getRSIOverboughtForSymbol(self, symbol):
-        rsiState = self.getRSIForSymbol(symbol)
+        rsiState = self.getRSIStateForSymbol(symbol)
         if rsiState == None:
             print("RSI Bot: RSI Overbought is not available for {}".format(symbol))
             return -1
@@ -66,7 +66,7 @@ class rsiBot:
         return rsiOverbought
     
     def getRSIOversoldForSymbol(self, symbol):
-        rsiState = self.getRSIForSymbol(symbol)
+        rsiState = self.getRSIStateForSymbol(symbol)
         if rsiState == None:
             print("RSI Bot: RSI Oversold is not available for {}".format(symbol))
             return -1
@@ -77,7 +77,7 @@ class rsiBot:
         return rsiOversold
     
     def getDataTrendForSymbol(self, symbol):
-        rsiState = self.getRSIForSymbol(symbol)
+        rsiState = self.getRSIStateForSymbol(symbol)
         if rsiState == None:
             print("RSI Bot: Data Trend is not available for {}".format(symbol))
             return []

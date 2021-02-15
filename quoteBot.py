@@ -24,7 +24,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: Ask Price is not available for {}".format(symbol))
             return -1
-        askPrice = quote['ask_price']
+        askPrice = float(quote['askPrice'])
         if askPrice <= 0:
             print("Quote Bot: No Ask Price found for the symbol {}".format(symbol))
             return -1
@@ -35,7 +35,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: Bid Price is not available for {}".format(symbol))
             return -1
-        bidPrice = quote['bid_price']
+        bidPrice = float(quote['bidPrice'])
         if bidPrice <= 0:
             print("Quote Bot: No Bid Price found for the symbol {}".format(symbol))
             return -1
@@ -46,7 +46,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: Mark Price is not available for {}".format(symbol))
             return -1
-        markPrice = quote['mark_price']
+        markPrice = float(quote['markPrice'])
         if markPrice <= 0:
             print("Quote Bot: No Mark Price found for the symbol {}".format(symbol))
             return -1
@@ -57,7 +57,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: High Price is not available for {}".format(symbol))
             return -1
-        highPrice = quote['high_price']
+        highPrice = float(quote['highPrice'])
         if highPrice <= 0:
             print("Quote Bot: No High Price found for the symbol {}".format(symbol))
             return -1
@@ -68,7 +68,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: Low Price is not available for {}".format(symbol))
             return -1
-        lowPrice = quote['low_price']
+        lowPrice = float(quote['lowPrice'])
         if lowPrice <= 0:
             print("Quote Bot: No Low Price found for the symbol {}".format(symbol))
             return -1
@@ -79,7 +79,7 @@ class quoteBot:
         if not quote:
             print("Quote Bot: Open Price is not available for {}".format(symbol))
             return -1
-        openPrice = quote['open_price']
+        openPrice = float(quote['openPrice'])
         if openPrice <= 0:
             print("Quote Bot: No Open Price found for the symbol {}".format(symbol))
             return -1
