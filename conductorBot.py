@@ -14,6 +14,9 @@ import quoteBot
 # Config imports
 import config as cfg
 
+# Temporary import
+import robin_stocks as r
+
 class conductorBot:
     def __init__(self):
         print("Conductor Bot: I shall conduct")
@@ -50,9 +53,14 @@ class conductorBot:
 
             # RSI Bot configuration occurs here
             print("Conductor Bot: Loading RSI Bot")
-            self.__rsiBot.setRSIOverbought(cfg.rsiConfig['rsiOverbought'])
-            self.__rsiBot.setRSIOversold(cfg.rsiConfig['rsiOversold'])
             self.__rsiBot.setRSIWindow(cfg.rsiConfig['rsiWindow'])
+            for coinSymbol in cfg.config['coins']:
+                self.__rsiBot.addRSI(coinSymbol)
+                self.__rsiBot.setRSIOverboughtForSymbol(coinSymbol, cfg.rsiConfig['rsiOverbought'])
+                self.__rsiBot.setRSIOversoldForSymbol(coinSymbol, cfg.rsiConfig['rsiOversold'])
+                training_data = r.get_crypto_historicals(symbol=coinSymbol, interval='15second', span='hour', bounds='24_7', info='close_price')
+                self.__rsiBot.trainRSIBotForSymbol(coinSymbol, training_data)
+                    
 
             # MACD Bot configuration occurs here
             print("Conductor Bot: Loading MACD Bot")
@@ -67,7 +75,7 @@ class conductorBot:
             
             # Quote Bot configuration occurs here
             print("Conductor Bot: Loading Quote Bot")
-            for coinSymbol in cfg.quoteConfig['coins']:
+            for coinSymbol in cfg.config['coins']:
                 self.__quoteBot.addQuote(coinSymbol)
 
             # Buy Bot configuration occurs here
@@ -97,7 +105,7 @@ class conductorBot:
             print("Orchestrating")
             signal.signal(signal.SIGINT, self.killConductor)
             self.__quoteBot.updateQuotes()
-            self.__quoteBot.getCurrentQuoteState()
+            self.__quoteBot.getQuoteState()
 
             state = self.combineState()
             self.__pickleBot.pickle(state)

@@ -6,7 +6,7 @@ class quoteBot:
     def __init__(self):
         self.__quoteState = {}
     
-    def getCurrentQuoteState(self):
+    def getQuoteState(self):
         if not self.__quoteState:
             print("Quote Bot: No Quote States are available")
             return {}
@@ -17,9 +17,13 @@ class quoteBot:
             if quote == symbol:
                 return self.__quoteState[quote]
         print("Quote Bot: No Quote was found for the symbol {}".format(symbol))
+        return {}
     
     def getAskPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: Ask Price is not available for {}".format(symbol))
+            return -1
         askPrice = quote['ask_price']
         if askPrice <= 0:
             print("Quote Bot: No Ask Price found for the symbol {}".format(symbol))
@@ -28,6 +32,9 @@ class quoteBot:
 
     def getBidPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: Bid Price is not available for {}".format(symbol))
+            return -1
         bidPrice = quote['bid_price']
         if bidPrice <= 0:
             print("Quote Bot: No Bid Price found for the symbol {}".format(symbol))
@@ -36,6 +43,9 @@ class quoteBot:
 
     def getMarkPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: Mark Price is not available for {}".format(symbol))
+            return -1
         markPrice = quote['mark_price']
         if markPrice <= 0:
             print("Quote Bot: No Mark Price found for the symbol {}".format(symbol))
@@ -44,6 +54,9 @@ class quoteBot:
 
     def getHighPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: High Price is not available for {}".format(symbol))
+            return -1
         highPrice = quote['high_price']
         if highPrice <= 0:
             print("Quote Bot: No High Price found for the symbol {}".format(symbol))
@@ -52,6 +65,9 @@ class quoteBot:
 
     def getLowPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: Low Price is not available for {}".format(symbol))
+            return -1
         lowPrice = quote['low_price']
         if lowPrice <= 0:
             print("Quote Bot: No Low Price found for the symbol {}".format(symbol))
@@ -60,6 +76,9 @@ class quoteBot:
 
     def getOpenPrice(self, symbol):
         quote = self.getSymbolQuote(symbol)
+        if not quote:
+            print("Quote Bot: Open Price is not available for {}".format(symbol))
+            return -1
         openPrice = quote['open_price']
         if openPrice <= 0:
             print("Quote Bot: No Open Price found for the symbol {}".format(symbol))
