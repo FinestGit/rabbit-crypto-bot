@@ -3,6 +3,10 @@ import os
 
 load_dotenv()
 
+config = {
+    'coins': os.getenv("COIN_LIST").split(',')
+}
+
 pickleConfig = {
     "pickleFile": os.getenv("PICKLE_FILE"),
 }
@@ -25,8 +29,4 @@ macdConfig = {
 
 cashConfig = {
     'maximumUsableCash': os.getenv("MAXIMUM_CASH"),
-}
-
-quoteConfig = {
-    'coins': os.getenv("COIN_LIST").split(',')
 }
