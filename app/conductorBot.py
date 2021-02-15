@@ -10,6 +10,7 @@ import sessionBot
 import cashBot
 import pickleBot
 import quoteBot
+import dataBot
 
 # Config imports
 import config as cfg
@@ -26,6 +27,7 @@ class conductorBot:
         self.__sessionBot = sessionBot.sessionBot()
         self.__cashBot = cashBot.cashBot()
         self.__quoteBot = quoteBot.quoteBot()
+        self.__dataBot = dataBot.dataBot()
         self.loadConfig()
     
     def loadConfig(self):
@@ -37,6 +39,9 @@ class conductorBot:
         self.__sessionBot.setPassword(cfg.rhConfig['password'])
         self.__sessionBot.setSessionLength(cfg.rhConfig['expiration'])
         self.__sessionBot.sessionStart()
+
+        # Data Bot configuration occurs here
+        print("Conductor Bot: Loading Data Bot")
 
         # Pickle Bot configuration occurs here
         print("Conductor Bot: Loading Pickle Bot")
@@ -58,16 +63,15 @@ class conductorBot:
                 self.__rsiBot.addRSI(coinSymbol)
                 self.__rsiBot.setRSIOverboughtForSymbol(coinSymbol, cfg.rsiConfig['rsiOverbought'])
                 self.__rsiBot.setRSIOversoldForSymbol(coinSymbol, cfg.rsiConfig['rsiOversold'])
-                training_data = r.get_crypto_historicals(symbol=coinSymbol, interval='15second', span='hour', bounds='24_7', info='close_price')
+                training_data = self.__dataBot.getHistoricalData(coinSymbol)
                 self.__rsiBot.trainRSIBotForSymbol(coinSymbol, training_data)
                     
-
             # MACD Bot configuration occurs here
             print("Conductor Bot: Loading MACD Bot")
             self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
             for coinSymbol in cfg.config['coins']:
                 self.__macdBot.addMACD(coinSymbol)
-                training_data = r.get_crypto_historicals(symbol=coinSymbol, interval='15second', span='hour', bounds='24_7', info='close_price')
+                training_data = self.__dataBot.getHistoricalData(coinSymbol)
                 self.__macdBot.trainMACDBotForSymbol(coinSymbol, training_data)
 
             # Cash Bot configuration occurs here
