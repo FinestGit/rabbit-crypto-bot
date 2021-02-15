@@ -141,7 +141,7 @@ class rsiBot:
             f_value = float(value)
             rsiState = self.getRSIStateForSymbol(symbol)
             if rsiState == None:
-                print("RSI Bot: Dat Trend is not available for {}".format(symbol))
+                print("RSI Bot: Data Trend is not available for {}".format(symbol))
                 return
             dataTrend = rsiState['dataTrend']
             dataTrend.append(f_value)
@@ -154,13 +154,14 @@ class rsiBot:
             print("RSI Bot: Unable to calculate RSI for {}, RSI Window is too low".format(symbol))
             return
         rsiState = self.getRSIStateForSymbol(symbol)
-        if len(rsiState['dataTrend']) <= 0:
+        dataTrend = rsiState['dataTrend']
+        if len(dataTrend) <= 0:
             print("RSI Bot: Unable to calculate RSI for {}, Data Trend too small".format(symbol))
             return
-        if len(rsiState['dataTrend']) < self.__rsiWindow:
+        if len(dataTrend) < self.__rsiWindow:
             print("RSI Bot: Unable to calculate RSI for {}, Data Trend small then RSI Window".format(symbol))
             return
-        np_dataTrend = numpy.array(rsiState['dataTrend'])
+        np_dataTrend = numpy.array(dataTrend)
         rsiState['rsi'] = talib.RSI(np_dataTrend, self.__rsiWindow)
         rsiState['lastRsi'] = rsiState['rsi'][-1]
         self.__rsiState[symbol].update(rsiState)
