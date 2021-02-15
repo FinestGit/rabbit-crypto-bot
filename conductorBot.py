@@ -65,6 +65,10 @@ class conductorBot:
             # MACD Bot configuration occurs here
             print("Conductor Bot: Loading MACD Bot")
             self.__macdBot.setCheckedHistogramWindow(cfg.macdConfig['checkedHistogramWindow'])
+            for coinSymbol in cfg.config['coins']:
+                self.__macdBot.addMACD(coinSymbol)
+                training_data = r.get_crypto_historicals(symbol=coinSymbol, interval='15second', span='hour', bounds='24_7', info='close_price')
+                self.__macdBot.trainMACDBotForSymbol(coinSymbol, training_data)
 
             # Cash Bot configuration occurs here
             print("Conductor Bot: Loading Cash Bot")

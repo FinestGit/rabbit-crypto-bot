@@ -3,50 +3,87 @@ import numpy
 
 class macdBot:
     def __init__(self):
-        self.__macd = None
-        self.__macdSignal = None
-        self.__macdHistogram = None
-        self.__lastMacd = None
-        self.__lastMacdSignal = None
-        self.__checkedHistogram = None
+        self.__macdState = {}
         self.__checkedHistogramWindow = 0
-        self.__dataTrend = []
+
+    def getMACDState(self):
+        if not self.__macdState:
+            print("MACD Bot: No MACD States are available")
+            return {}
+        return self.__macdState
     
-    def getMACD(self):
-        if self.__macd == None:
-            print("MACD Bot: No MACD is available")
+    def getMACDStateForSymbol(self, symbol):
+        if symbol == '':
+            print("MACD Bot: Cannot get MACD State for empty string")
             return None
-        return self.__macd
+        if symbol not in self.__macdState:
+            print("MACD Bot: MACD State is not available for {}".format(symbol))
+            return None
+        macdState = self.__macdState[symbol]
+        if not macdState:
+            print("MACD Bot: MACD State is not available for {}".format(symbol))
+            return None
+        return macdState
     
-    def getMACDSignal(self):
-        if self.__macdSignal == None:
-            print("MACD Bot: No MACD Signal is available")
-            return None
-        return self.__macdSignal
+    def getMACDForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: MACD is not available for {}".format(symbol))
+            return []
+        macd = macdState['macd']
+        if len(macd) <= 0:
+            print("MACD Bot: MACD is not available for {}".format(symbol))
+            return []
+        return macd
+    
+    def getMACDSignalForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: MACD Signal is not available for {}".format(symbol))
+            return []
+        macdSignal = macdState['macdSignal']
+        if len(macdSignal) <= 0:
+            print("MACD Bot: MACD Signal is not available for {}".format(symbol))
+            return []
+        return macdSignal
         
-    def getMACDHistogram(self):
-        if self.__macdHistogram == None:
-            print("MACD Bot: No MACD Histogram is available")
-            return None
-        return self.__macdHistogram
+    def getMACDHistogramForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: MACD Histogram is not available for {}".format(symbol))
+            return []
+        macdHistogram = macdState['macdHistogram']
+        if len(macdHistogram) <= 0:
+            print("MACD Bot: MACD Histogram is not available for {}".format(symbol))
+            return []
+        return macdHistogram
     
-    def getLastMACD(self):
-        if self.__lastMacd == None:
-            print("MACD Bot: No Last MACD is available")
+    def getLastMACDForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: Last MACD is not available for {}".format(symbol))
             return None
-        return self.__lastMacd
+        lastMacd = macdState['lastMacd']
+        return lastMacd
     
-    def getLastMACDSignal(self):
-        if self.__lastMacdSignal == None:
-            print("MACD Bot: No Last MACD Signal is available")
+    def getLastMACDSignalForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: Last MACD Signal is not available for {}".format(symbol))
             return None
-        return self.__lastMacdSigna
+        lastMacdSignal = macdState['lastMacdSignal']
+        return lastMacdSignal
     
-    def getCheckedHistogram(self):
-        if self.__checkedHistogram == None:
-            print("MACD Bot: No Checked Histogram is available")
-            return None
-        return self.__checkedHistogram
+    def getCheckedHistogramForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: Checked MACD Histogram is not available for {}".format(symbol))
+            return []
+        checkedHistogram = macdState['checkedHistogram']
+        if len(checkedHistogram) <= 0:
+            print("MACD Bot: MACD Signal is not available for {}".format(symbol))
+            return []
+        return checkedHistogram
     
     def getCheckedHistogramWindow(self):
         if self.__checkedHistogramWindow <= 0:
@@ -54,11 +91,16 @@ class macdBot:
             return 0
         return self.__checkedHistogramWindow
     
-    def getDataTrend(self):
-        if len(self.__dataTrend) <= 0:
-            print("MACD Bot: No Data Trend is available")
+    def getDataTrendForSymbol(self, symbol):
+        macdState = self.getMACDStateForSymbol(symbol)
+        if macdState == None:
+            print("MACD Bot: Data Trend is not available for {}".format(symbol))
             return []
-        return self.__dataTrend
+        dataTrend = macdState['dataTrend']
+        if len(dataTrend) <= 0:
+            print("MACD Bot: Data Trend is not available for {}".format(symbol))
+            return []
+        return dataTrend
     
     def setCheckedHistogramWindow(self, checkedHistogramWindow):
         try:
@@ -69,35 +111,59 @@ class macdBot:
         if i_checkedHistogramWindow <= 0:
             print("MACD Bot: Cannot set Checked Histogram Window to any value less than 1")
             return
-        self.__checkedHistogramWindow = i_checkedHistogramWindow
-        
+        self.__checkedHistogramWindow = i_checkedHistogramWindow     
     
-    def addToDataTrend(self, value):
+    def addToDataTrendForSymbol(self, symbol, value):
         try:
             f_value = float(value)
-            self.__dataTrend.append(f_value)
+            macdState = self.getMACDStateForSymbol(symbol)
+            if macdState == None:
+                print("MACD Bot: Data Trend is not available for {}".format(symbol))
+                return
+            dataTrend = macdState['dataTrend']
+            dataTrend.append(f_value)
         except ValueError:
-            print("MACD Bot: Unable to convert value to float, cannot add to data trend")
+            print("MACD Bot: Unable to convert value to float, cannot add to Data Trend for {}".format(symbol))
             return
     
-    def calculatedMACD(self):
+    def calculatedMACDForSymbol(self, symbol):
         if self.__checkedHistogramWindow <= 0:
-            print("MACD Bot: Unable to calculate MACD, Checked Histogram Window too low")
+            print("MACD Bot: Unable to calculate MACD for {}, Checked Histogram Window too low".format(symbol))
             return
-        if len(self.__dataTrend) <= 0:
-            print("MACD Bot: Unable to calculate MACD, Data Trend too small")
-        if len(self.__dataTrend) <= 26:
-            print("MACD Bot: Unable to calculate MACD, Data Trend must have 26 entries")
-        np_datatrend = numpy.array(self.__dataTrend)
-        self.__macd, self.__macdSignal, self.__macdHistogram = talib.MACD(np_datatrend)
-        self.__lastMacd = self.__macd[-1]
-        self.__lastMacdSignal = self.__macd[-1]
-        self.__checkedHistogram = self.__macdHistogram[(-(self.__checkedHistogramWindow))]
+        macdState = self.getMACDStateForSymbol(symbol)
+        dataTrend = macdState['dataTrend']
+        if len(dataTrend) <= 0:
+            print("MACD Bot: Unable to calculate MACD for {}, Data Trend too small".format(symbol))
+            return
+        if len(dataTrend) <= 26:
+            print("MACD Bot: Unable to calculate MACD for {}, Data Trend must have 26 entries".format(symbol))
+        np_datatrend = numpy.array(dataTrend)
+        macd = macdState['macd']
+        macdSignal = macdState['macdSignal']
+        macdHistogram = macdState['macdHistogram']
+        macd, macdSignal, macdHistogram = talib.MACD(np_datatrend)
+        macdState['lastMacd'] = macd[-1]
+        macdState['lastMacdSignal'] = macdSignal[-1]
+        macdState['checkedHistogram'] = macdHistogram[(-(self.__checkedHistogramWindow))]
     
-    def trainMACDBot(self, trainingData):
+    def trainMACDBotForSymbol(self, symbol, trainingData):
         if len(trainingData) <= 0:
             print("MACD Bot: No Training Data provided")
             return
         for data in trainingData:
-            self.addToDataTrend(data)
-        self.calculatedMACD()
+            self.addToDataTrendForSymbol(symbol, data)
+        self.calculatedMACDForSymbol(symbol)
+    
+    def addMACD(self, symbol):
+        new_MACD = {
+            symbol: {
+                'macd': [],
+                'macdSignal': [],
+                'macdHistogram': [],
+                'lastMacd': 0,
+                'lastMacdSignal': 0,
+                'checkedHistogram': [],
+                'dataTrend': []
+            }
+        }
+        self.__macdState.update(new_MACD)
